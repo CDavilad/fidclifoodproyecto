@@ -1,0 +1,28 @@
+{% extends "header.html" %}
+
+{% block content %} 
+<section class="register-photo">
+    <class="form-container">    
+      <center><h1>Buscado {{ searchTerm }}</h1></center>
+      <br>     
+    <div class = "row row-cols-1 row-cols-md-3 g-4">
+     
+        {% for producto in productos %}
+        <div class="col-6">
+            <div class="card text-black" style="height: 10rem; width: 23rem; margin: 5px 0px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{producto.nombre}}</h5>
+                    <p class="card-text">{{producto.categoria}}</p>
+                    <p class="card-text">{{producto.precio}}COP</p>
+                    <a href="{% url 'Add' producto.id %}" class="btn btn-primary">Agregar al carrito</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+</section>
+<div class="col-4">
+    {% include "carrito.html" %}
+</div>
+{% endblock %}

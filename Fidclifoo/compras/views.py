@@ -49,7 +49,10 @@ def registro(request):
 def inicio(request):
     if  not request.user.is_authenticated:
         return redirect("index")
-
+    searchTerm = request.GET.get('search')
+    
+    if searchTerm:
+        return Busqueda(request)
     tiendas = Tienda.objects.all()
     user = request.user
     return render(request,'inicio.html', {'tiendas' : tiendas, 'user':user})
@@ -59,6 +62,10 @@ def tienda(request, nombretienda):
         return redirect("index")
     tienda = Tienda.objects.get(nombre = nombretienda)
     productos = Producto.objects.filter(tienda = tienda)
+    searchTerm = request.GET.get('search')
+    
+    if searchTerm:
+        return Busqueda(request)
     return render(request, 'tienda.html', {'productos':productos,'tienda':tienda})
 
 def perfil(request):
@@ -74,6 +81,10 @@ def perfil(request):
         else:
             messages.error(request, ('Imposible continuar'))
         return redirect("perfil")
+    searchTerm = request.GET.get('search')
+    
+    if searchTerm:
+        return Busqueda(request)
     user_form = UserForm(instance=request.user)
     profile_form = PerfilForm(instance=request.user.perfil)
     return render(request=request, template_name="perfil.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form})
@@ -110,18 +121,45 @@ def limpiar_carrito(request):
     return redirect("inicio")
 
 def guardar_carro(request):
-    carrito = Carrito(request)
-    compra = Orden(user = request.user, total = carrito.total)
+    carrito = request.session.get("carrito")
+    total = 0
+    compra = Orden(user = request.user, total = total)
     compra.save()
+    productos = Producto.objects.all()
+    for producto in productos:
+        id = str(producto.id)
+        if id in carrito.keys():
+            cantidad = carrito[id]["cantidad"]
+            '''carrito[id]["acumulado"] += producto.precio'''
+            total += producto.precio * cantidad
+            compra.productos.add(producto)
     
-    producto = Producto.objects.get(nombre = "McBacon")
-    total = producto.precio
-    compra.productos.add(producto)
     compra.total = total
     compra.save()
-    carrito.limpiar()
     return redirect("inicio")
 
 def historial(request):
+    searchTerm = request.GET.get('search')
+    
+    if searchTerm:
+        return Busqueda(request)
     ordenes = Orden.objects.filter(user = request.user)
     return render(request=request, template_name="historial.html", context={"user":request.user, "ordenes":ordenes})
+
+def Busqueda(request):
+    productos = Producto.objects.all()
+    searchTerm = request.GET.get('search')
+    
+    if searchTerm:
+        productos = Producto.objects.filter(nombre__icontains = searchTerm)
+    else:
+        productos = Producto.objects.all()
+    return render(request,'listaproductos.html', {'searchTerm': searchTerm, 'productos' : productos})
+
+def ValoracionPositiva(request, producto, tienda):
+    producto.valoracion += 1
+    redirect("tienda", tienda)
+    
+def ValoracionNegativa(request, producto, tienda):
+    producto.valoracion -= 1
+    redirect("tienda", tienda)

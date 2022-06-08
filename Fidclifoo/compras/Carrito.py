@@ -4,7 +4,6 @@ class Carrito:
     def __init__(self, request):
         self.request = request
         self.session = request.session
-        self.total = 0
         carrito = self.session.get("carrito")
         if not carrito:
             self.session["carrito"] = {}
@@ -21,11 +20,10 @@ class Carrito:
                 "acumulado": producto.precio,
                 "cantidad": 1,
             }
-            self.total += producto.precio
         else:
             self.carrito[id]["cantidad"] += 1
             self.carrito[id]["acumulado"] += producto.precio
-            self.total += producto.precio
+            
         self.guardar_carrito()
 
     def guardar_carrito(self):

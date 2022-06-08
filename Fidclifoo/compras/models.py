@@ -37,6 +37,7 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to = 'compras/productos/')
     disponibilidad = models.BooleanField(default=True)
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    valoracion = models.IntegerField(default=0)
     
     class Categoria(models.TextChoices):
         Hamburguesa = "Hamburguesa"

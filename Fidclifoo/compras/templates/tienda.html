@@ -19,7 +19,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{producto.nombre}}</h5>
                                     <p class="card-text">{{producto.categoria}}</p>
-                                    <p class="card-text">{{producto.precio}}</p>
+                                    <p class="card-text">{{producto.precio}}COP, Apoyo al producto: {{producto.valoracion}}</p>
                                     <a href="{% url 'Add' producto.id %}" class="btn btn-primary">Agregar al carrito</a>
                                 </div>
                             </div>

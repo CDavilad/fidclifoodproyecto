@@ -33,4 +33,6 @@ urlpatterns = [
     path('limpiar/', views.limpiar_carrito, name="CLS"),
     path('guardar_carro/', views.guardar_carro, name="guardar"),
     path('historial/', views.historial, name = 'historial'),
+    path('valoracionPositiva/', views.ValoracionPositiva, name='valoracionPositiva'),
+    path('valoracionNegativa/', views.ValoracionNegativa, name='valoracionNegativa'),
 ]
